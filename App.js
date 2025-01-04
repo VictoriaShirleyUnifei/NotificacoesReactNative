@@ -41,6 +41,8 @@ export default function App() {
           break;
         case EventType.PRESS:
           console.log("Tocou: ", detail.notification);
+          console.log("Title: ", detail.notification?.title);
+          console.log("Corpo: ", detail.notification?.body);
           break;
       }
     })
@@ -82,7 +84,7 @@ export default function App() {
       timestamp: date.getTime()
     }
 
-    await notifee.createTriggerNotification({
+    const notification = await notifee.createTriggerNotification({
       title: "Lembrete Estudo",
       body: "Estudar React Native as 23h",
       android: {
@@ -93,19 +95,43 @@ export default function App() {
         }
       }
     }, trigger)
+
+    console.log("Notificação agendada: ", notification);
+  }
+
+  function handleListNotifications(){
+    notifee.getTriggerNotificationIds()
+    .then((ids) => {
+      console.log(ids);
+    })
+  }
+
+  async function handleCancelNotification(){
+    await notifee.cancelNotification("GRUE2dgKXy6xj775jGtf");
+    console.log("Notificação cancelada com sucesso!");
   }
 
   return (
     <View style={styles.container}>
-      <Text>Notificações App</Text>
-      <Button 
-        title='Enviar notificação'
-        onPress={handleNotificate}
-      />
-      <Button 
-        title='Agendar notificação'
-        onPress={handleScheduleNotification}
-      />
+      <Text style={styles.title}>Notificações App</Text>
+      <View style={styles.buttons}>
+        <Button
+          title='Enviar notificação'
+          onPress={handleNotificate}
+        />
+        <Button
+          title='Agendar notificação'
+          onPress={handleScheduleNotification}
+        />
+        <Button
+          title='Listar notificação'
+          onPress={handleListNotifications}
+        />
+        <Button
+          title='Cancelar notificação'
+          onPress={handleCancelNotification}
+        />
+      </View>
     </View>
   );
 }
@@ -117,4 +143,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  title: {
+    marginBottom:20,
+    fontWeight: 'bold'
+  },
+  buttons: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6
+  }
 });
